@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  ctf-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80"
+
+  xss-bot:
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    ports:
+      - "8081"
+    environment:
+      - FLAG=flag{87d35b72-588d-b755-46b0-9eeba3937e61}

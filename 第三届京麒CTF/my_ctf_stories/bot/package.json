@@ -1,0 +1,13 @@
+{
+  "name": "xss-bot",
+  "version": "1.0.0",
+  "description": "A headless Chrome bot",
+  "type": "module",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "puppeteer": "^24.8.2"
+  }
+}
