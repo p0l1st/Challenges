@@ -1,0 +1,29 @@
+<!-- assets/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link href="assets/css/com_bootstrap_4.5.2_css_bootstrap.css" rel="stylesheet">
+    <script src="assets/js/2.5.4_dist_umd_popper.js"></script>
+    <script src="assets/js/com_jquery-3.5.1.slim.js"></script>
+    <script src="assets/js/com_bootstrap_4.5.2_js_bootstrap.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Register</h1>
+    <form action="/register" method="post" class="mt-3">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <p class="mt-3">Have an account <a href="/login">Login here</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!-- assets/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Files</title>
+    <link href="assets/css/com_bootstrap_4.5.2_css_bootstrap.css" rel="stylesheet">
+    <script src="assets/js/2.5.4_dist_umd_popper.js"></script>
+    <script src="assets/js/com_jquery-3.5.1.slim.js"></script>
+    <script src="assets/js/com_bootstrap_4.5.2_js_bootstrap.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Your Files</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+    <table class="table mt-3">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">File Name</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Files}}
+        <tr>
+            <th scope="row">{{.ID}}</th>
+            <td>{{.Name}}</td>
+            <td>
+                <a href="/download/{{.ID}}" class="btn btn-primary">Download</a>
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

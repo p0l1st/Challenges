@@ -1,0 +1,22 @@
+<!-- assets/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link href="assets/css/com_bootstrap_4.5.2_css_bootstrap.css" rel="stylesheet">
+    <script src="assets/js/2.5.4_dist_umd_popper.js"></script>
+    <script src="assets/js/com_jquery-3.5.1.slim.js"></script>
+    <script src="assets/js/com_bootstrap_4.5.2_js_bootstrap.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Hello {{.User.Username}}</h1>
+    <h5>welcome to the file management system</h5>
+    <h5>You can upload a tar file and download the extracted file</h5>
+    <a href="/files" class="btn btn-primary">File Management</a>
+    <a href="/logout" class="btn btn-danger">Logout</a>
+</div>
+</body>
+</html>
