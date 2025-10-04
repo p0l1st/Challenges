@@ -1,0 +1,19 @@
+[app]
+host = "0.0.0.0"
+port = 8000
+
+[workflow]
+name = "workflow.yaml"
+work_dir = "files"
+
+[workflow.jobs]
+enable = true
+path = "./jobs"
+
+[workflow.artifacts]
+enable = false
+path = "./artifacts"
+
+[workflow.security]
+files = ["main.rs"]
+runs = ["cargo build", "cargo build --release"]

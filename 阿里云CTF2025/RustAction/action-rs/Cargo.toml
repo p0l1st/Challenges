@@ -1,0 +1,20 @@
+[package]
+name = "action"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.95"
+axum = { version = "0.8.1", features = ["macros", "multipart"] }
+chrono = { version = "0.4.39", features = ["serde"] }
+config = "0.15.6"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_yaml = "0.9.34"
+tempfile = "3.15.0"
+tokio = { version = "1.43.0", features = ["full"] }
+uuid = { version = "1.12.1", features = [
+    "fast-rng",
+    "macro-diagnostics",
+    "v4",
+] }
+zip = "2.2.2"

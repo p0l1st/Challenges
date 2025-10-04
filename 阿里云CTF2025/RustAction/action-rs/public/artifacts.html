@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦀</text></svg>" />
+    <title>Artifacts - Rust Action</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-primary {
+            background-color: #e45928 !important;
+            border-color: #e45928 !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #c34b1f !important;
+            border-color: #c34b1f !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Rust Action</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/jobs">Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/artifacts">Artifacts</a>
+                    </li>
+                </ul>
+                <button class="btn btn-danger ms-auto" id="cleanButton">Clean</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div id="alertPlaceholder"></div>
+
+        <h1 class="text-center">Artifacts 📦</h1>
+
+        <!-- Artifacts List -->
+        <table class="table table-hover text-center">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="artifactsTable">
+                <!-- Artifacts will be dynamically populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Clean Confirmation Modal -->
+    <div class="modal fade" id="cleanConfirmationModal" tabindex="-1" aria-labelledby="cleanConfirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cleanConfirmationModalLabel">Confirm Clean</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure to clean all the jobs and artifacts?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="confirmCleanButton">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function fetchArtifacts() {
+            const response = await fetch("/artifacts/list");
+            window.artifacts = await response.json();
+
+            const artifactsTable = document.getElementById('artifactsTable');
+
+            artifactsTable.innerHTML = '';
+            window.artifacts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            window.artifacts.forEach(artifact => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${artifact.id}</td>
+                    <td>${artifact.name}</td>
+                    <td>${new Date(artifact.date).toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="downloadArtifact('${artifact.id}')">Download</button>
+                    </td>
+                `;
+
+                artifactsTable.appendChild(row);
+            });
+        }
+
+        async function downloadArtifact(id) {
+            const response = await fetch(`/artifacts/${id}`);
+
+            if (!response.ok) {
+                const message = await response.text();
+                showAlert(message, 'danger');
+                return;
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+
+            a.href = url;
+            a.download = `artifact_${id}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            window.URL.revokeObjectURL(url);
+        }
+
+        function showAlert(message, type) {
+            const alertTemplate = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+            const alertPlaceholder = document.getElementById('alertPlaceholder');
+            alertPlaceholder.innerHTML = alertTemplate;
+
+            setTimeout(() => {
+                const alert = alertPlaceholder.querySelector('.alert');
+                if (alert) {
+                    alert.classList.remove('show');
+                    alert.classList.add('hide');
+                    setTimeout(() => alert.remove(), 500);
+                }
+            }, 3000);
+        }
+
+        document.getElementById('cleanButton').addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('cleanConfirmationModal'));
+            modal.show();
+        });
+
+        document.getElementById('confirmCleanButton').addEventListener('click', async () => {
+            const response = await fetch('/clean', { method: 'POST' });
+            const result = await response.text();
+
+            if (result.includes("Internal Server Error")) {
+                showAlert(result, 'danger');
+            } else {
+                showAlert(result, 'success');
+            }
+
+            fetchArtifacts();
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('cleanConfirmationModal'));
+            modal.hide();
+        });
+
+        fetchArtifacts();
+    </script>
+</body>
+
+</html>
